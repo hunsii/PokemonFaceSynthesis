@@ -15,15 +15,15 @@ A brief description of your project, explaining its purpose and key features.
 
 ## Installation
 To run this repository, download face landmark model from google mediapipe.
-"""shell
+```shell
 wget -O face_landmarker_v2_with_blendshapes.task -q https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
-"""
+```
 
 ## Usage
 You can see web demo. 
-"""python
+```python
 python demo_webcam.py
-"""
+```
 
 ## Contributing
 
