@@ -1,39 +1,38 @@
-# Pokemon Face
+# Pokemon Face Synthesis
+The Pokemon Face Synthesis project aims to find the most similar Pokemon when provided with a human face image and then generate a synthesized image that combines the features of both the Pokemon and the human face. By leveraging computer vision techniques and deep learning algorithms, this project explores the fascinating intersection between human facial recognition and the imaginative world of Pokemon.
 
-Provide a clear and concise title for your project.
-
-## Description
-
-A brief description of your project, explaining its purpose and key features.
-
-## Library
-
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+## Features
+- Human Face to Pokemon Matching: Given a human face image as input, the project identifies the Pokemon that closely resembles the facial features of the individual.
+- Pokemon and Human Face Synthesis: The project generates a synthesized image by combining the identified Pokemon with the human face, creating an intriguing hybrid representation.
 
 ## Installation
-To run this repository, download face landmark model from google mediapipe.
+1. Clone the repository:
+```shell
+git clone https://github.com/hunsii/pokemon.git
+```
+
+2. Install the required dependencies:
+```shell
+pip install -r requirements.txt
+```
+
+3. Download face landmark model from google mediapipe.
 ```shell
 wget -O face_landmarker_v2_with_blendshapes.task -q https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
 ```
 
 ## Usage
-You can see web demo. 
+If you have web cam, run demo file for webcam.
 ```python
 python demo_webcam.py
 ```
 
-## Contributing
+If you don't have web cam, run demo file for file.
+```python
+python demo_file.py
+```
 
-Specify guidelines for contributing to your project, and how others can get involved.
+## Results
+Example Result
 
-## License
-
-Include information about the license for your project. Choose an appropriate license, or mention if it's open-source.
-
-## Contact
-
-Provide your contact information so that others can reach out to you with questions or feedback.
 
