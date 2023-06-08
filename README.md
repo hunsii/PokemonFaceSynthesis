@@ -36,6 +36,7 @@ python demo_file.py
 ```
 
 ## Results
-Example Result
+Demo image
+![image](sample.png)
 
 
