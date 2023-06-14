@@ -24,16 +24,17 @@ pip install -r requirements.txt
 wget -O face_landmarker_v2_with_blendshapes.task -q https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
 ```
 
+4. Download pretrained efficientnet-b0 model.
+```shell
+gdown 1qYVVTZxH1ke3kOLC7XTStT1al4KTkTh9
+```
+   
 ## Usage
 If you have web cam, run demo file for webcam.
 ```python
-python demo_webcam.py
+python app.py --device="cpu"
 ```
 
-If you don't have web cam, run demo file for file.
-```python
-python demo_file.py
-```
 
 ## Results
 Demo image
