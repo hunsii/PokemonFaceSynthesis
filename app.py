@@ -25,6 +25,12 @@ from torchvision import transforms
 import ast
 
 def get_pokemon_point_list():
+    """
+    Retrieves the data points of Pokémon from text files and returns them as a dictionary.
+
+    Returns:
+        data_dict (dict): A dictionary containing Pokémon names as keys and their corresponding data points as values.
+    """
     l = glob.glob("points/*.txt")
     data_dict = {}
     data = ""
@@ -57,6 +63,17 @@ def get_pokemon_point_list():
     return data_dict
 
 def get_facearea(image):
+    """
+    Detects and extracts the face area from an input image.
+
+    Args:
+        image (ndarray): An input image represented as a NumPy array with RGB channel.
+
+    Returns:
+        mask (ndarray): A binary mask representing the detected face area.
+        pts1 (ndarray): Selected landmark coordinates of the detected face.
+    """
+    
     # Predefined indices for specific landmarks of interest
     p = [
         10, 368, 397, 152, 172, 162
@@ -159,6 +176,16 @@ def get_facearea(image):
     return mask, pts1  
 
 def get_center_of_mask(mask):
+    """
+    Calculates the center coordinates of white pixels in a binary mask.
+
+    Args:
+        mask (ndarray): A binary mask image.
+
+    Returns:
+        center_x (int): The x-coordinate of the center.
+        center_y (int): The y-coordinate of the center.
+    """
     # Find the coordinates of white pixels in the mask
     white_pixels = np.where(mask == 255)  # Returns the coordinates of pixels satisfying the condition
 
@@ -168,14 +195,30 @@ def get_center_of_mask(mask):
     return center_x, center_y
 
 def get_homography_pokemon(image, pokemon, pts1, pts2):
+    """
+    Warps a Pokémon image onto an input image using homography transformation.
+
+    Args:
+        image (ndarray): An input image represented as a NumPy array.
+        pokemon (ndarray): A Pokémon image represented as a NumPy array.
+        pts1 (ndarray): Selected landmark coordinates of the detected face.
+        pts2 (ndarray): Landmark coordinates of the Pokémon image.
+
+    Returns:
+        result (ndarray): The input image with the Pokémon image warped onto it.
+
+    """
     H, _ = cv2.findHomography(pts2, pts1, cv2.RANSAC) # pts1과 pts2의 행렬 주의 (N,1,2)
     result3 = cv2.warpPerspective(pokemon, H, (image.shape[1], image.shape[0]))
     return result3
 
 def main(opt):
+    # Load pretrained model from path
     model = timm.create_model('efficientnet_b0', pretrained=True)
     model.load_state_dict(torch.load("saved_model_b0.pth", map_location=opt.device))
     model.eval()
+
+    # Set transform using efficientnet_b0
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -185,9 +228,11 @@ def main(opt):
     # 파일에서 문자열 읽기
     with open("pokemon_mapping.txt", "r") as file:
         data = file.readlines()[0].split('=',maxsplit=2)[-1]#.split('\n')[0]
+
     # 문자열을 dict 형태로 변환
     pokemon_mapping_dict = ast.literal_eval(data)
 
+    # Load animegan2 model from pytorch hub.
     model2 = torch.hub.load(
         "AK391/animegan2-pytorch:main",
         "generator",
@@ -196,15 +241,18 @@ def main(opt):
         progress=False
     )
 
+    # Load face2paint model from pytorch hub.
     face2paint = torch.hub.load(
         'AK391/animegan2-pytorch:main', 'face2paint', 
         size=512, device=opt.device, side_by_side=False
     )
 
+    # Get pokemon point list
     pokemon_point_list = get_pokemon_point_list()
 
+
+    # This fuction work when user sent image.
     def greet(image):
-        cv2.imwrite("temp.png", image)
         # Convert from openCV2 to PIL for AnimeGAN2
         image_pil = Image.fromarray(image)
         image_transformed = transform(image_pil).unsqueeze(0)
@@ -248,6 +296,7 @@ def main(opt):
         # Convert from openCV2 to PIL for AnimeGAN2
         return result_sentence, result
 
+    # Make gradio Web interface
     demo = gr.Interface(
         fn=greet,
         inputs=[
@@ -264,10 +313,10 @@ def main(opt):
         title="딥러닝 프로그래밍 기말 프로젝트",
         description="당신과 가장 닮은 포켓몬을 찾아보세요!",
         article = "<p style='text-align: center'><a href='https://github.com/hunsii/PokemonFaceSynthesis' target='_blank'>Github Repo by hunsii</a></p> <center></center></p>",
-        examples=[['26000.png']],
+        examples=[['26000.png'], ['33002.png'], ['65062.png'], ['65065.png']],
         # live=True,
     )
-    demo.launch()
+    demo.launch(share=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
